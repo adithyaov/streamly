@@ -1,0 +1,73 @@
+name: Regression checking
+
+on: workflow_dispatch
+
+jobs:
+  check-regressions:
+    env:
+      BENCH_SH: bin/bench.sh
+      CHARTS_DIR: charts/
+      BENCH_TO_RUN:
+      DIFF_CUTOFF_PERCENT: 10
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Setup haskell
+      uses: actions/setup-haskell@v1
+      with:
+        ghc-version: 8.8.3
+        cabal-version: 3.2
+
+    # -----------------------------------------------------------------
+    # -- Generate reports for the base branch and upload
+    # -----------------------------------------------------------------
+
+    - name: Checkout the base branch
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+
+    - name: Run benchmarks
+      run: |
+        chmod +x $BENCH_SH
+        $BENCH_SH --benchmarks "$BENCH_TO_RUN" --raw --quick
+
+    - name: Upload charts
+      uses: actions/upload-artifact@v2
+      with:
+        name: charts
+        path: ${{ env.CHARTS_DIR }}
+
+    # -----------------------------------------------------------------
+    # -- Download, generate reports for the current branch and append
+    # -----------------------------------------------------------------
+
+    - name: Checkout the current branch
+      uses: actions/checkout@v2
+
+    - name: Download charts
+      uses: actions/download-artifact@v2
+      with:
+        name: charts
+        path: ${{ env.CHARTS_DIR }}
+
+    - name: Run benchmarks and append
+      run: |
+        chmod +x $BENCH_SH
+        $BENCH_SH --benchmarks "$BENCH_TO_RUN" --raw --quick --append
+
+    # -----------------------------------------------------------------
+    # -- Compare
+    # -----------------------------------------------------------------
+
+    - name: Compare benchmarks
+      run: |
+        chmod +x $BENCH_SH
+        $BENCH_SH --benchmarks "$BENCH_TO_RUN" \
+                  --fields cputime
+                  --no-measure \
+                  --silent --quick --append \
+                  --diff-cutoff-percent $DIFF_CUTOFF_PERCENT \
+            | grep -v '^$' > /dev/null
