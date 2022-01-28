@@ -1,14 +1,23 @@
 name: Regression checking
 
-on: pull_request
+on:
+  workflow_dispatch:
+    inputs:
+      benchmarks:
+        description: '--benchmarks (defaults to "")'
+        required: false
+        default: ""
+      diff-cutoff-percent:
+        description: '--diff-cutoff-percent (defaults to 100)'
+        required: false
+        default: 100
 
 jobs:
   check-regressions:
     env:
       BENCH_SH: bin/bench.sh
-      CHARTS_DIR: charts/
-      BENCH_TO_RUN: Data.Array
-      DIFF_CUTOFF_PERCENT: 10
+      BENCHMARKS: ${{ github.event.inputs.benchmarks }}
+      DIFF_CUTOFF_PERCENT: ${{ github.event.inputs.diff-cutoff-percent }}
 
     runs-on: ubuntu-latest
 
@@ -32,7 +41,7 @@ jobs:
     - name: Run benchmarks
       run: |
         chmod +x $BENCH_SH
-        $BENCH_SH --benchmarks "$BENCH_TO_RUN" --quick
+        $BENCH_SH --benchmarks "$BENCHMARKS" --quick
 
     # -----------------------------------------------------------------
     # -- Download, generate reports for the current branch and append
@@ -46,7 +55,7 @@ jobs:
     - name: Run benchmarks and append
       run: |
         chmod +x $BENCH_SH
-        $BENCH_SH --benchmarks "$BENCH_TO_RUN" --quick --append
+        $BENCH_SH --benchmarks "$BENCHMARKS" --quick --append
 
     # -----------------------------------------------------------------
     # -- Compare
@@ -55,9 +64,9 @@ jobs:
     - name: Compare benchmarks
       run: |
         chmod +x $BENCH_SH
-        $BENCH_SH --benchmarks "$BENCH_TO_RUN" \
+        $BENCH_SH --benchmarks "$BENCHMARKS" \
                   --fields cputime \
                   --no-measure \
                   --silent --quick --append \
                   --diff-cutoff-percent $DIFF_CUTOFF_PERCENT \
-            | grep -v '^$' > /dev/null
+            | grep -v '^$'
