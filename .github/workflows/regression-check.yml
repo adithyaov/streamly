@@ -32,7 +32,7 @@ jobs:
     - name: Run benchmarks
       run: |
         chmod +x $BENCH_SH
-        $BENCH_SH --benchmarks "$BENCH_TO_RUN" --raw --quick
+        $BENCH_SH --benchmarks "$BENCH_TO_RUN" --quick
 
     # -----------------------------------------------------------------
     # -- Download, generate reports for the current branch and append
@@ -46,7 +46,7 @@ jobs:
     - name: Run benchmarks and append
       run: |
         chmod +x $BENCH_SH
-        $BENCH_SH --benchmarks "$BENCH_TO_RUN" --raw --quick --append
+        $BENCH_SH --benchmarks "$BENCH_TO_RUN" --quick --append
 
     # -----------------------------------------------------------------
     # -- Compare
