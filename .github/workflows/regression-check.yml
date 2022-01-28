@@ -7,7 +7,7 @@ jobs:
     env:
       BENCH_SH: bin/bench.sh
       CHARTS_DIR: charts/
-      BENCH_TO_RUN:
+      BENCH_TO_RUN: Data.Array
       DIFF_CUTOFF_PERCENT: 10
 
     runs-on: ubuntu-latest
