@@ -56,7 +56,7 @@ jobs:
       run: |
         chmod +x $BENCH_SH
         $BENCH_SH --benchmarks "$BENCH_TO_RUN" \
-                  --fields cputime
+                  --fields cputime \
                   --no-measure \
                   --silent --quick --append \
                   --diff-cutoff-percent $DIFF_CUTOFF_PERCENT \
