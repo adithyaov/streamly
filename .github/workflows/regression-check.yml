@@ -34,6 +34,13 @@ jobs:
         ghc-version: 8.8.3
         cabal-version: 3.2
 
+    - uses: actions/cache@v1
+      name: Cache ~/.cabal
+      with:
+        path: ~/.cabal
+        # Bump the key version to clear the cache
+        key: cabal-cache-v1
+
     # -----------------------------------------------------------------
     # -- Generate reports for the base branch and upload
     # -----------------------------------------------------------------
