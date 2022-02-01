@@ -106,6 +106,4 @@ main = runWithCLIOpts defStreamSize allBenchmarks
     allBenchmarks size =
         [ bgroup (o_1_space_prefix moduleName) $
              o_1_space_generation size ++ o_1_space_elimination size
-        , bgroup (o_n_space_prefix moduleName) $
-             o_n_heap_serial size
         ] ++ commonBenchmarks size
