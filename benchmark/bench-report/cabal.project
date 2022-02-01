@@ -1,1 +1,6 @@
 packages: .
+
+source-repository-package
+   type: git
+   location: https://github.com/composewell/bench-show.git
+   tag: 3947d8ec9bf588468cce714427f1fa0cbc985815
