@@ -16,6 +16,9 @@ on:
         required: false
         default: 50
 
+# References:
+# https://docs.github.com/en/rest/reference/pulls
+
 jobs:
   check-regressions:
     env:
@@ -48,7 +51,7 @@ jobs:
     - name: Checkout the base branch
       uses: actions/checkout@v2
       with:
-        ref: ${{ github.event.pull_request.head.sha }}
+        ref: ${{ github.event.pull_request.base.sha }}
 
     - name: Run benchmarks
       run: |
